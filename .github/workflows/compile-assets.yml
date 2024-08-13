@@ -1,0 +1,38 @@
+name: compile assets
+
+on:
+  workflow_call:
+    inputs:
+      node:
+        default: "18"
+        type: string
+      cmd:
+        default: "build"
+        type: string
+      build_path:
+        default: "public/"
+        type: string
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node }}
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Compile asset
+        run: npm run ${{ inputs.cmd }}
+
+      - name: Commit compiled files
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Compile Assets
+          file_pattern: ${{ inputs.build_path }}
