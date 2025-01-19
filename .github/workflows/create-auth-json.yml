@@ -1,0 +1,19 @@
+name: create auth json file
+
+on:
+  workflow_call:
+    inputs:
+      json:
+        required: true
+        type: string
+
+jobs:
+  make-auth:
+    runs-on: ubuntu-latest
+
+    name: "Create auth.json file"
+
+    steps:
+      - name: Create auth.json file
+        run: |
+          echo "${{ inputs.json }}" > auth.json
