@@ -2,10 +2,9 @@ name: create auth json file
 
 on:
   workflow_call:
-    inputs:
-      json:
+    secrets:
+      GITHUB_TOKEN:
         required: true
-        type: string
 
 jobs:
   make-auth:
@@ -13,7 +12,14 @@ jobs:
 
     name: "Create auth.json file"
 
+
     steps:
       - name: Create auth.json file
         run: |
-          echo "${{ inputs.json }}" > auth.json
+          echo "{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}" > auth.json
+
+      - name: Upload the file as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: reusable-file
+          path: auth.json
