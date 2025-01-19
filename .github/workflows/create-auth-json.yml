@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Create auth.json file
         run: |
-          echo "{"github-oauth": {"github.com": "${{ secrets.TOKEN }}"}}" > auth.json
+          echo '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}}' > auth.json
 
       - name: Upload the file as artifact
         uses: actions/upload-artifact@v4
