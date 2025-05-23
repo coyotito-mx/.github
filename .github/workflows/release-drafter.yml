@@ -2,10 +2,10 @@ name: Release Drafter
 
 on:
     workflow_call:
-        inputs:
+        secrets:
             token:
-                type: string
-                description: 'The token to use for authentication'
+              required: true
+              description: 'The token to use for authentication'
 
 permissions:
   contents: read
@@ -19,4 +19,4 @@ jobs:
     steps:
       - uses: release-drafter/release-drafter@v6
         env:
-          GITHUB_TOKEN: ${{ inputs.token }}
+          GITHUB_TOKEN: ${{ secrets.token }}
