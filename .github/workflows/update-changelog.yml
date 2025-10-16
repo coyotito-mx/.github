@@ -47,3 +47,4 @@ jobs:
           branch: ${{ inputs.target_commitish }}
           commit_message: Update CHANGELOG
           file_pattern: CHANGELOG.md
+          skip_checkout: true
