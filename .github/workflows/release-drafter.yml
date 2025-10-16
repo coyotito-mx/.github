@@ -1,11 +1,11 @@
 name: Release Drafter
 
 on:
-    workflow_call:
-        secrets:
-            token:
-              required: true
-              description: 'The token to use for authentication'
+  workflow_call:
+    secrets:
+      token:
+        required: true
+        description: 'The token to use for authentication'
 
 permissions:
   contents: read
