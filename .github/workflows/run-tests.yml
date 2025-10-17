@@ -10,7 +10,7 @@ on:
         type: string
       pest:
         default: true
-        description: 'Run tests with Pest, fallback to PHPUnit if false'
+        description: 'Run tests with Pest, fall back to PHPUnit if false'
         required: false
         type: boolean
       parallel:
