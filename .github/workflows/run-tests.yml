@@ -1,0 +1,60 @@
+name: Run Tests
+
+on:
+  workflow_call:
+    inputs:
+      php:
+        default: "8.4"
+        description: 'PHP version to use'
+        required: false
+        type: string
+      pest:
+        default: true
+        description: 'Run tests with Pest, fall back to PHPUnit if false'
+        required: false
+        type: boolean
+      parallel:
+        default: false
+        description: 'Run tests in parallel (for Pest only)'
+        required: false
+        type: boolean
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php }}
+          tools: composer
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+
+      - name: Install PHP dependencies
+        run: |
+          composer install \
+            --prefer-dist \
+            --no-progress \
+            --no-interaction \
+            --optimize-autoloader
+
+      - name: Run with Pest
+        if: ${{ inputs.pest }}
+        run: vendor/bin/pest --ci ${{ inputs.parallel && '--parallel' || '' }}
+
+      - name: Run with PHPUnit
+        if: ${{ !inputs.pest }}
+        run: vendor/bin/phpunit
