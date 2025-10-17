@@ -41,9 +41,9 @@ jobs:
           PRESET="${{ inputs.preset }}"
           
           if [[ ! "${{ inputs.fix }}" ]]; then
-              pint --verbose --preset="$PRESET" --fix
-          else
               pint --verbose --preset="$PRESET"
+          else
+              pint --verbose --preset="$PRESET" --test
           fi
 
       - name: Commit linted files
