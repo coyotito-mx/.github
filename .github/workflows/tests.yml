@@ -1,0 +1,31 @@
+name: Run Tests
+
+on:
+  workflow_call:
+    inputs:
+      php:
+        default: "8.4"
+        description: 'PHP version to use'
+        required: true
+        type: string
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php }}
+          tools: composer
+
+      - name: Install dependencies
+        run: |
+          composer install \
+            --prefer-dist \
+            --no-progress \
+            --no-interaction
