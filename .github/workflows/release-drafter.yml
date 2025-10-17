@@ -3,9 +3,9 @@ name: Release Drafter
 on:
   workflow_call:
     secrets:
-      token:
+      PAT:
         required: true
-        description: 'The token to use for authentication'
+        description: '`GITHUB_TOKEN` with write permissions'
 
 permissions:
   contents: read
@@ -19,4 +19,4 @@ jobs:
     steps:
       - uses: release-drafter/release-drafter@v6
         env:
-          GITHUB_TOKEN: ${{ secrets.token }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
