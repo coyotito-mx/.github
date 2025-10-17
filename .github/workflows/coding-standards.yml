@@ -4,14 +4,19 @@ on:
   workflow_call:
     inputs:
       php:
-        default: "8.1"
+        default: "8.4"
         type: string
       message:
-        default: Fix code styling
+        description: This value is used when committing changes (`fix` is true)
+        default: Fix code style issues
         type: string
       fix:
         default: true
         type: boolean
+      preset:
+        description: The preset to use, defaults to `laravel`
+        default: laravel
+        type: string
 
 jobs:
   lint:
@@ -32,7 +37,14 @@ jobs:
         run: composer global require laravel/pint
 
       - name: Run Pint
-        run: pint
+        run: |
+          PRESET="${{ inputs.preset }}"
+          
+          if [[ ! "${{ inputs.fix }}" ]]; then
+              pint --verbose --preset="$PRESET"
+          else
+              pint --verbose --preset="$PRESET" --test
+          fi
 
       - name: Commit linted files
         if: ${{ inputs.fix }}

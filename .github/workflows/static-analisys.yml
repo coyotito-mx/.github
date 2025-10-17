@@ -2,13 +2,17 @@ name: static analysis
 
 on:
   workflow_call:
+    inputs:
+      php:
+        default: "8.4"
+        type: string
+      memory_limit:
+        default: "1G"
+        type: string
 
 jobs:
   tests:
-    runs-on: ubuntu-22.04
-
-    strategy:
-      fail-fast: true
+    runs-on: ubuntu-latest
 
     name: Static Analysis
 
@@ -19,7 +23,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: ${{ inputs.php }}
           extensions: swoole, relay
           tools: composer:v2
           coverage: none
@@ -32,4 +36,4 @@ jobs:
           command: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
       - name: Execute type checking
-        run: vendor/bin/phpstan
+        run: vendor/bin/phpstan analyze --memory-limit="${{ inputs.memory_limit }}"
