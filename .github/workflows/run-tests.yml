@@ -9,7 +9,7 @@ on:
         required: false
         type: string
       pest:
-        default: false
+        default: true
         description: 'Run tests over Pest'
         required: false
         type: boolean
@@ -41,10 +41,10 @@ jobs:
             --no-interaction \
             --optimize-autoloader
 
-      - name: Run tests
-        run: |
-          TEST_FRAMEWORK=${{ inputs.pest && 'pest' || 'phpunit' }}
-          
-          vendor/bin/$TEST_FRAMEWORK \
-              ${{ inputs.pest && '--ci' || '' }} \
-              ${{ (inputs.pest && inputs.parallel)  && '--parallel' || '' }} 
+      - name: Run with Pest
+        if: ${{ inputs.pest }}
+        run: vendor/bin/pest --ci ${{ inputs.parallel && '--parallel' || '' }}
+
+      - name: Run with PHPUnit
+        if: ${{ !inputs.pest }}
+        run: vendor/bin/phpunit
