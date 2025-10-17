@@ -1,0 +1,50 @@
+name: Run Tests
+
+on:
+  workflow_call:
+    inputs:
+      php:
+        default: "8.4"
+        description: 'PHP version to use'
+        required: false
+        type: string
+      pest:
+        default: false
+        description: 'Run tests over Pest'
+        required: false
+        type: boolean
+      parallel:
+        default: false
+        description: 'Run tests in parallel (for Pest only)'
+        required: false
+        type: boolean
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php }}
+          tools: composer
+
+      - name: Install PHP dependencies
+        run: |
+          composer install \
+            --prefer-dist \
+            --no-progress \
+            --no-interaction \
+            --optimize-autoloader
+
+      - name: Run tests
+        run: |
+          TEST_FRAMEWORK=${{ inputs.pest && 'pest' || 'phpunit' }}
+          
+          vendor/bin/$TEST_FRAMEWORK \
+              ${{ inputs.pest && '--ci' || '' }} \
+              ${{ (inputs.pest && inputs.parallel)  && '--parallel' || '' }} 
