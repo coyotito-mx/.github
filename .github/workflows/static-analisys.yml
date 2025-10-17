@@ -6,6 +6,9 @@ on:
       php:
         default: "8.4"
         type: string
+      memory_limit:
+        default: "1G"
+        type: string
 
 jobs:
   tests:
@@ -33,4 +36,4 @@ jobs:
           command: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
       - name: Execute type checking
-        run: vendor/bin/phpstan
+        run: vendor/bin/phpstan analyze --memory-limit="${{ inputs.memory_limit }}"
