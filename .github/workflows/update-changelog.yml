@@ -72,3 +72,4 @@ jobs:
         with:
           title: ${{ inputs.pr-title }}
           branch: ${{ inputs.update-branch }}
+          sign-commits: true
