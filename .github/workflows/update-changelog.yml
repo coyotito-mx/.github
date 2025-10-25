@@ -79,4 +79,5 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           title: ${{ inputs.pr-title }}
+          base: main
           branch: ${{ inputs.update-branch }}
