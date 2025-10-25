@@ -18,10 +18,22 @@ on:
         description: 'Release notes'
         default: ${{ github.event.release.body }}
         type: string
+      pr-title:
+        description: 'PR title'
+        default: 'Update `CHANGELOG`'
+        type: string
+      update-branch:
+        description: 'PR branch'
+        default: docs/update-changelog
+        type: string
 
 jobs:
   update:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -54,6 +66,13 @@ jobs:
       - name: Commit updated CHANGELOG
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          branch: ${{ inputs.branch }}
+          branch: ${{ inputs.update-branch }}
           commit_message: Update CHANGELOG
           file_pattern: CHANGELOG.md
+          create_branch: true
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          title: ${{ inputs.pr-title }}
+          branch: ${{ inputs.update-branch }}
