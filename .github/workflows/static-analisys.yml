@@ -4,7 +4,20 @@ on:
   workflow_call:
     inputs:
       php:
+        description: 'PHP version to use.'
         default: "8.4"
+        type: string
+      extensions:
+        description: 'Extensions to pass to `shivammathur/setup-php` (e.g., `swoole, relay`).'
+        default: ''
+        type: string
+      tools:
+        description: 'Tools to pass to `shivammathur/setup-php`.'
+        default: 'composer:v2'
+        type: string
+      dependency-version:
+        description: 'Composer dependency strategy: stable | lowest | highest.'
+        default: 'stable'
         type: string
       memory_limit:
         default: "1G"
@@ -24,8 +37,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ inputs.php }}
-          extensions: swoole, relay
-          tools: composer:v2
+          extensions: ${{ inputs.extensions }}
+          tools: ${{ inputs.tools }}
           coverage: none
 
       - name: Install dependencies
@@ -33,7 +46,15 @@ jobs:
         with:
           timeout_minutes: 5
           max_attempts: 5
-          command: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
+          command: |
+            case "${{ inputs.dependency-version }}" in
+              lowest)
+                composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction --no-progress
+                ;;
+              highest|stable|*)
+                composer update --prefer-stable --prefer-dist --no-interaction --no-progress
+                ;;
+            esac
 
       - name: Execute type checking
         run: vendor/bin/phpstan analyze --memory-limit="${{ inputs.memory_limit }}"

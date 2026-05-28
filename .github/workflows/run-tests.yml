@@ -4,9 +4,20 @@ on:
   workflow_call:
     inputs:
       php:
-        default: "8.4"
-        description: 'PHP version to use'
-        required: false
+        description: 'JSON array of PHP versions to use. Defaults to `["8.4"]`.'
+        default: '["8.4"]'
+        type: string
+      extensions:
+        description: 'Extensions to pass to `shivammathur/setup-php`.'
+        default: ''
+        type: string
+      tools:
+        description: 'Tools to pass to `shivammathur/setup-php`.'
+        default: 'composer:v2'
+        type: string
+      dependency-version:
+        description: 'Composer dependency strategy: stable | lowest | highest.'
+        default: 'stable'
         type: string
       pest:
         default: true
@@ -21,6 +32,10 @@ on:
 
 jobs:
   test:
+    strategy:
+      matrix:
+        php: ${{ fromJson(inputs.php) }}
+
     runs-on: ubuntu-latest
 
     steps:
@@ -30,26 +45,33 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ inputs.php }}
-          tools: composer
+          php-version: ${{ matrix.php }}
+          extensions: ${{ inputs.extensions }}
+          tools: ${{ inputs.tools }}
 
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
       - name: Cache Dependencies
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ubuntu-latest-php-${{ matrix.php }}-composer-${{ inputs.dependency-version }}-${{ hashFiles('**/composer.lock') }}
 
       - name: Install PHP dependencies
         run: |
-          composer install \
-            --prefer-dist \
-            --no-progress \
-            --no-interaction \
-            --optimize-autoloader
+          case "${{ inputs.dependency-version }}" in
+            lowest)
+              composer update --prefer-lowest --prefer-stable --prefer-dist --no-progress --no-interaction --optimize-autoloader
+              ;;
+            highest)
+              composer update --prefer-stable --prefer-dist --no-progress --no-interaction --optimize-autoloader
+              ;;
+            *)
+              composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
+              ;;
+          esac
 
       - name: Run with Pest
         if: ${{ inputs.pest }}

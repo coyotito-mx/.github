@@ -4,7 +4,16 @@ on:
   workflow_call:
     inputs:
       php:
+        description: 'PHP version to use.'
         default: "8.4"
+        type: string
+      extensions:
+        description: 'Extensions to pass to `shivammathur/setup-php`.'
+        default: ''
+        type: string
+      tools:
+        description: 'Tools to pass to `shivammathur/setup-php`.'
+        default: 'composer:v2'
         type: string
       message:
         description: This value is used when committing changes (`fix` is true)
@@ -30,21 +39,20 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ inputs.php }}
-          extensions: json, dom, curl, libxml, mbstring
+          extensions: ${{ inputs.extensions }}
+          tools: ${{ inputs.tools }}
           coverage: none
 
       - name: Install Pint
         run: composer global require laravel/pint
 
-      - name: Run Pint
-        run: |
-          PRESET="${{ inputs.preset }}"
-          
-          if [[ ! "${{ inputs.fix }}" ]]; then
-              pint --verbose --preset="$PRESET"
-          else
-              pint --verbose --preset="$PRESET" --test
-          fi
+      - name: Run Pint (fix)
+        if: ${{ inputs.fix }}
+        run: pint --verbose --preset="${{ inputs.preset }}"
+
+      - name: Run Pint (test)
+        if: ${{ !inputs.fix }}
+        run: pint --verbose --preset="${{ inputs.preset }}" --test
 
       - name: Commit linted files
         if: ${{ inputs.fix }}

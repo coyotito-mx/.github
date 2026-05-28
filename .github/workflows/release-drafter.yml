@@ -2,6 +2,19 @@ name: Release Drafter
 
 on:
   workflow_call:
+    inputs:
+      config-name:
+        description: 'Name of the config file inside .github/. Empty uses the action default.'
+        default: ''
+        type: string
+      publish:
+        description: 'Whether the release should be published instead of left as a draft.'
+        default: false
+        type: boolean
+      prerelease:
+        description: 'Marks the release as a prerelease.'
+        default: false
+        type: boolean
     secrets:
       PAT:
         required: true
@@ -20,5 +33,9 @@ jobs:
 
     steps:
       - uses: release-drafter/release-drafter@v6
+        with:
+          config-name: ${{ inputs.config-name }}
+          publish: ${{ inputs.publish }}
+          prerelease: ${{ inputs.prerelease }}
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}

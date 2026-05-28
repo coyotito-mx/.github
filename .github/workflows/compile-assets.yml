@@ -4,6 +4,7 @@ on:
   workflow_call:
     inputs:
       node:
+        description: 'Node version to use.'
         default: "26"
         type: string
       cmd:
@@ -11,6 +12,18 @@ on:
         type: string
       build_path:
         default: "public/"
+        type: string
+      working-directory:
+        description: 'Directory where npm ci and npm run <cmd> are executed.'
+        default: '.'
+        type: string
+      autocommit:
+        description: 'Whether the compiled assets should be committed back to the repo.'
+        default: true
+        type: boolean
+      commit_message:
+        description: 'Commit message used when `autocommit` is true.'
+        default: 'Compile Assets'
         type: string
 
 jobs:
@@ -26,13 +39,16 @@ jobs:
           node-version: ${{ inputs.node }}
 
       - name: Install NPM dependencies
+        working-directory: ${{ inputs.working-directory }}
         run: npm ci
 
       - name: Compile asset
+        working-directory: ${{ inputs.working-directory }}
         run: npm run ${{ inputs.cmd }}
 
       - name: Commit compiled files
+        if: ${{ inputs.autocommit }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: Compile Assets
+          commit_message: ${{ inputs.commit_message }}
           file_pattern: ${{ inputs.build_path }}
