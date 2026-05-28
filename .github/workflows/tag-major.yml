@@ -21,6 +21,22 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Configure git and SSH signing
+        env:
+          SIGNING_KEY: ${{ secrets.TAG_SIGNING_KEY }}
+          SIGNER_NAME: ${{ vars.TAG_SIGNER_NAME }}
+          SIGNER_EMAIL: ${{ vars.TAG_SIGNER_EMAIL }}
+        run: |
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$SIGNING_KEY" > "$HOME/.ssh/tag_signing_key"
+          chmod 600 "$HOME/.ssh/tag_signing_key"
+
+          git config user.name  "$SIGNER_NAME"
+          git config user.email "$SIGNER_EMAIL"
+          git config gpg.format ssh
+          git config user.signingkey "$HOME/.ssh/tag_signing_key"
+          git config tag.gpgSign true
+
       - name: Move major tag
         env:
           TAG: ${{ github.event.release.tag_name }}
@@ -31,8 +47,5 @@ jobs:
             exit 0
           fi
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git tag -fa "$MAJOR" -m "Update $MAJOR tag to $TAG" "$TAG"
+          git tag -fs "$MAJOR" -m "Update $MAJOR tag to $TAG" "$TAG"
           git push origin "$MAJOR" --force
