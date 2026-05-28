@@ -11,13 +11,13 @@ Reusable GitHub Actions workflows for PHP / Laravel projects: tests, code style,
 Pin to the **major** tag to receive backwards-compatible patches and new features automatically:
 
 ```yaml
-uses: asciito/github/.github/workflows/run-tests.yml@v1
+uses: coyotito-mx/.github/.github/workflows/run-tests.yml@v1
 ```
 
 Pin to an **exact** version for immutable, reproducible builds:
 
 ```yaml
-uses: asciito/github/.github/workflows/run-tests.yml@v1.0.0
+uses: coyotito-mx/.github/.github/workflows/run-tests.yml@v1.0.0
 ```
 
 Major bumps (`v2`, `v3`, ...) signal breaking changes. Consumers on `@v1` stay on the latest `v1.x.y` until they choose to migrate.
@@ -45,13 +45,13 @@ on:
 
 jobs:
   tests:
-    uses: asciito/github/.github/workflows/run-tests.yml@v1
+    uses: coyotito-mx/.github/.github/workflows/run-tests.yml@v1
     with:
       php: '["8.3", "8.4"]'
       dependency-version: stable
 
   lint:
-    uses: asciito/github/.github/workflows/coding-standards.yml@v1
+    uses: coyotito-mx/.github/.github/workflows/coding-standards.yml@v1
     with:
       fix: false
 ```
