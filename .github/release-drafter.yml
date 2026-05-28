@@ -50,6 +50,47 @@ version-resolver:
 exclude-labels:
   - 'skip-changelog'
 
+autolabeler:
+  - label: 'breaking'
+    title:
+      - '/^[a-z]+(\(.+\))?!:/i'
+      - '/BREAKING[ -]CHANGE/'
+    body:
+      - '/BREAKING[ -]CHANGE/'
+  - label: 'feature'
+    title:
+      - '/^feat(\(.+\))?:/i'
+    branch:
+      - '/^feat(ure)?\/.+/'
+  - label: 'fix'
+    title:
+      - '/^fix(\(.+\))?:/i'
+    branch:
+      - '/^(bug)?fix\/.+/'
+  - label: 'refactor'
+    title:
+      - '/^refactor(\(.+\))?:/i'
+    branch:
+      - '/^refactor\/.+/'
+  - label: 'chore'
+    title:
+      - '/^chore(\(.+\))?:/i'
+      - '/^build(\(.+\))?:/i'
+      - '/^ci(\(.+\))?:/i'
+      - '/^perf(\(.+\))?:/i'
+      - '/^style(\(.+\))?:/i'
+      - '/^test(\(.+\))?:/i'
+    branch:
+      - '/^chore\/.+/'
+  - label: 'docs'
+    title:
+      - '/^docs(\(.+\))?:/i'
+    branch:
+      - '/^docs\/.+/'
+    files:
+      - '**/*.md'
+      - 'docs/**'
+
 template: |
   ## What's Changed
 
