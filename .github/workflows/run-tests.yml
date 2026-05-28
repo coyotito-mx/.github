@@ -19,6 +19,11 @@ on:
         description: 'Composer dependency strategy: stable | lowest | highest.'
         default: 'stable'
         type: string
+      for-laravel:
+        description: 'Apply Laravel-specific setup (copy `.env.example` to `.env` and run `php artisan key:generate`) before tests.'
+        default: false
+        required: false
+        type: boolean
       pest:
         default: true
         description: 'Run tests with Pest, fall back to PHPUnit if false'
@@ -72,6 +77,14 @@ jobs:
               composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
               ;;
           esac
+
+      - name: Copy `.env` file
+        if: ${{ inputs.for-laravel }}
+        run: cp .env.example .env
+
+      - name: Generate application key
+        if: ${{ inputs.for-laravel }}
+        run: php artisan key:generate
 
       - name: Run with Pest
         if: ${{ inputs.pest }}
