@@ -1,0 +1,36 @@
+name: Performance
+description: Report a performance issue or propose an optimization.
+title: "[Perf] "
+labels: [performance]
+body:
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Scenario
+      description: The workflow, request, or page where performance is a concern.
+    validations:
+      required: true
+  - type: textarea
+    id: baseline
+    attributes:
+      label: Baseline metrics
+      description: "What you measured today: response time, memory, queries, etc."
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed metrics
+      description: The numbers (or symptom) you'd like to see improved.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Who is affected and how.
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Steps or links to reproduce the slow path locally.

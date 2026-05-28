@@ -1,0 +1,25 @@
+name: Idea
+description: A loose concept or discussion starter, not yet a concrete proposal.
+title: "[Idea] "
+labels: [idea]
+body:
+  - type: textarea
+    id: concept
+    attributes:
+      label: Concept
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem it might solve
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Loose proposal
+      description: Anything from a paragraph to a sketch — does not need to be complete.
+  - type: textarea
+    id: feedback
+    attributes:
+      label: Open to feedback on
+      description: Specific aspects where you want input.
