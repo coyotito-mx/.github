@@ -1,0 +1,63 @@
+name: Publish Release
+
+on:
+  workflow_call:
+    inputs:
+      config-name:
+        description: 'release-drafter config file inside .github/. Empty uses the default.'
+        default: ''
+        type: string
+    secrets:
+      TAG_SIGNING_KEY:
+        required: true
+        description: 'SSH private key used to sign the release tag.'
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    permissions:
+      contents: write
+      pull-requests: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Resolve drafted release
+        id: drafter
+        uses: release-drafter/release-drafter@v6
+        with:
+          config-name: ${{ inputs.config-name }}
+          commitish: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git and SSH signing
+        if: ${{ steps.drafter.outputs.tag_name != '' }}
+        env:
+          SIGNING_KEY: ${{ secrets.TAG_SIGNING_KEY }}
+          SIGNER_NAME: ${{ vars.TAG_SIGNER_NAME }}
+          SIGNER_EMAIL: ${{ vars.TAG_SIGNER_EMAIL }}
+        run: |
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$SIGNING_KEY" > "$HOME/.ssh/tag_signing_key"
+          chmod 600 "$HOME/.ssh/tag_signing_key"
+
+          git config user.name  "$SIGNER_NAME"
+          git config user.email "$SIGNER_EMAIL"
+          git config gpg.format ssh
+          git config user.signingkey "$HOME/.ssh/tag_signing_key"
+
+      - name: Create signed tag and publish release
+        if: ${{ steps.drafter.outputs.tag_name != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.drafter.outputs.tag_name }}
+        run: |
+          git tag -s "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+          gh release edit "$TAG" --draft=false --latest
