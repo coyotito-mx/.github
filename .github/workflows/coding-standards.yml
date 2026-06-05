@@ -26,10 +26,19 @@ on:
         description: The preset to use, defaults to `laravel`
         default: laravel
         type: string
+      working-directory:
+        description: 'Directory to run commands in (e.g. a monorepo subdir like `apps/api`). Defaults to the repository root.'
+        default: '.'
+        required: false
+        type: string
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
 
     steps:
       - name: Checkout code

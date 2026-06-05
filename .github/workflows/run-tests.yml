@@ -34,6 +34,11 @@ on:
         description: 'Run tests in parallel (for Pest only)'
         required: false
         type: boolean
+      working-directory:
+        description: 'Directory to run commands in (e.g. a monorepo subdir like `apps/api`). Defaults to the repository root.'
+        default: '.'
+        required: false
+        type: string
 
 jobs:
   test:
@@ -42,6 +47,10 @@ jobs:
         php: ${{ fromJson(inputs.php) }}
 
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
 
     steps:
       - name: Checkout repository
