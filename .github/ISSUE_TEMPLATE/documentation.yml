@@ -1,0 +1,23 @@
+name: Documentation
+description: Report missing, incorrect, or unclear documentation.
+title: "[Docs] "
+labels: [documentation]
+body:
+  - type: input
+    id: area
+    attributes:
+      label: Area
+      placeholder: e.g. README, CLAUDE.md, code comments, public docs
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's wrong or missing
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested change
+      description: A concrete improvement proposal, if you have one.

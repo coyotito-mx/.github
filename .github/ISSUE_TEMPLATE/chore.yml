@@ -1,0 +1,23 @@
+name: Chore
+description: Maintenance, refactor, dependency update, or other non-feature work.
+title: "[Chore] "
+labels: [chore]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why this work matters now (tech debt, deprecation, upcoming dependency, etc.).
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What's included; what's explicitly out.
