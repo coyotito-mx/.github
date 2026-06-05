@@ -22,12 +22,21 @@ on:
       memory_limit:
         default: "1G"
         type: string
+      working-directory:
+        description: 'Directory to run commands in (e.g. a monorepo subdir like `apps/api`). Defaults to the repository root.'
+        default: '.'
+        required: false
+        type: string
 
 jobs:
   tests:
     runs-on: ubuntu-latest
 
     name: Static Analysis
+
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
 
     steps:
       - name: Checkout code
@@ -47,6 +56,7 @@ jobs:
           timeout_minutes: 5
           max_attempts: 5
           command: |
+            cd "${{ inputs.working-directory }}"
             case "${{ inputs.dependency-version }}" in
               lowest)
                 composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction --no-progress
