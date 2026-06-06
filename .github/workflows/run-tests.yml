@@ -87,6 +87,10 @@ jobs:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ubuntu-latest-php-${{ matrix.php }}-composer-${{ inputs.dependency-version }}-${{ hashFiles('**/composer.lock') }}
 
+      - name: Copy `.env` file
+        if: ${{ inputs.for-laravel }}
+        run: cp .env.example .env
+
       - name: Install PHP dependencies
         run: |
           case "${{ inputs.dependency-version }}" in
@@ -100,10 +104,6 @@ jobs:
               composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
               ;;
           esac
-
-      - name: Copy `.env` file
-        if: ${{ inputs.for-laravel }}
-        run: cp .env.example .env
 
       - name: Generate application key
         if: ${{ inputs.for-laravel }}
