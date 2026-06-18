@@ -1,0 +1,60 @@
+# Canonical label set for coyotito-mx repositories.
+#
+# Source of truth synced into each repo by the reusable workflow
+# .github/workflows/sync-labels.yml, which repos invoke from their own
+# .github/workflows/labels.yml. New repos created from the template get the
+# caller workflow and pick these up on first run (GitHub does not copy labels).
+#
+# Format: crazy-max/ghaction-github-labeler.
+
+# Conventional Commit categories (used by release-drafter)
+- name: feature
+  color: "8ff578"
+  description: A new feature
+- name: bugfix
+  color: "1e8f44"
+  description: A bug fix
+- name: refactor
+  color: "a10834"
+  description: A code change that neither fixes a bug nor adds a feature
+- name: documentation
+  color: "38720d"
+  description: Documentation only changes
+- name: tests
+  color: "a9ce59"
+  description: Adding missing tests or correcting existing tests
+- name: chore
+  color: "f9d0c4"
+  description: Maintenance tasks that do not affect code behavior
+- name: ci
+  color: "f5d84b"
+  description: Changes to our CI configuration files and scripts
+- name: build
+  color: "053534"
+  description: Changes that affect the build system or external dependencies
+- name: performance
+  color: "116879"
+  description: A code change that improves performance
+- name: style
+  color: "2132fe"
+  description: Changes that do not affect the meaning of the code
+
+# Release-drafter control
+- name: skip-changelog
+  color: "ededed"
+  description: Exclude this PR from the release notes
+- name: changelog
+  color: "b60205"
+  description: Update CHANGELOG.md
+- name: release
+  color: "f9e479"
+  description: For release branches
+- name: major
+  color: "ed0a1a"
+  description: A major release
+- name: minor
+  color: "97d01e"
+  description: A minor release
+- name: patch
+  color: "b2f37e"
+  description: A patch release

@@ -1,0 +1,29 @@
+name: Sync Labels
+
+# Reusable: applies the org's canonical label set (labels.yml in this repo) to
+# the calling repository. Repos invoke it from their own
+# .github/workflows/labels.yml, so every repo — including new ones created from
+# the template — ends up with the standard labels (GitHub doesn't copy labels
+# from templates, but it does copy the caller workflow, which runs on first push).
+on:
+  workflow_call:
+
+permissions:
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch the canonical label set
+        uses: actions/checkout@v5
+        with:
+          repository: coyotito-mx/.github
+          path: .org-labels
+
+      - name: Apply labels to this repository
+        uses: crazy-max/ghaction-github-labeler@v5
+        with:
+          yaml-file: .org-labels/labels.yml
+          # Don't delete labels that aren't in the set (a repo may have its own).
+          skip-delete: true
